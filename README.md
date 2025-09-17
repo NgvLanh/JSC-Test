@@ -1,6 +1,6 @@
 <p align="center">
   <h1 align="center">JSC-TEST</h1>
-  <p align="center"><em>Automate Success, Empower Your Business Growth</em></p>
+  <p align="center"><em>Information about project</em></p>
 </p>
 
 ![last-commit](https://img.shields.io/github/last-commit/NgvLanh/JSC-Test?style=flat&logo=git&logoColor=white&color=0080ff)
@@ -11,6 +11,10 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED.svg?style=flat&logo=Docker&logoColor=white)
 ![XML](https://img.shields.io/badge/XML-005FAD.svg?style=flat&logo=XML&logoColor=white)
 ![YAML](https://img.shields.io/badge/YAML-CB171E.svg?style=flat&logo=YAML&logoColor=white)
+![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F.svg?style=flat&logo=Thymeleaf&logoColor=white)
+![jQuery](https://img.shields.io/badge/jQuery-0769AD.svg?style=flat&logo=jquery&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3.svg?style=flat&logo=bootstrap&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E.svg?style=flat&logo=supabase&logoColor=white)
 
 ---
 
@@ -33,7 +37,7 @@ This project helps developers rapidly build scalable, secure, and maintainable b
 - 🧩 **🔧** *Containerized Deployment:* Uses Docker and Docker Compose for consistent, environment-agnostic setup.
 - 🚀 **⏰** *Advanced Scheduling:* Leverages Quartz to automate email dispatches based on flexible cron expressions.
 - 🔐 **🛡️** *Secure Authentication:* Integrates OAuth2 login via Google for seamless user management.
-- 📄 **📝** *API-Driven Management:* Provides REST endpoints for managing email templates and schedules.
+- 📄 **📝** *API-Driven Management:* Provides endpoints for managing email templates and schedules.
 - 🌐 **🎨** *Web UI:* Offers intuitive interfaces for editing templates and configuring schedules.
 - 📧 **📅** *Reliable Email Workflow:* Supports dynamic email content and automated delivery, boosting communication efficiency.
 
