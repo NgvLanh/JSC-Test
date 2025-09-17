@@ -1,5 +1,3 @@
-# JSC-TEST
-
 <p align="center">
   <h1 align="center">JSC-TEST</h1>
   <p align="center"><em>Automate Success, Empower Your Business Growth</em></p>
