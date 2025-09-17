@@ -110,6 +110,15 @@ function renderSchedules(schedules) {
   const tbody = $('#scheduleList');
   tbody.empty();
 
+  if (schedules.length === 0) {
+    tbody.append(`
+      <tr>
+        <td colspan="9" class="text-center">Không có lịch gửi email nào.</td>
+      </tr>
+    `);
+    return;
+  }
+
   schedules.forEach((schedule, index) => {
     templates.push(schedule.emailTemplate);
     const row = `

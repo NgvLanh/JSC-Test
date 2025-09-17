@@ -119,6 +119,14 @@ function loadTemplates(page) {
 function renderTemplates(templates) {
   const tbody = $('#templateList');
   tbody.empty();
+  if (templates.length === 0) {
+    tbody.append(`
+      <tr>
+        <td colspan="9" class="text-center">Không có Email template nào.</td>
+      </tr>
+    `);
+    return;
+  }
 
   templates.forEach((template, index) => {
     const row = `
