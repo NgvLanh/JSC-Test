@@ -1,5 +1,5 @@
 let currentPage = 0;
-const pageSize = 5;
+const pageSize = 10;
 var templates = [];
 let searchTerm = '';
 
@@ -41,6 +41,20 @@ $(document).ready(function () {
       loadTemplates(0);
     }, 500)
   );
+
+  $('#templateModal').on('hidden.bs.modal', function () {
+    const form = $('#templateForm')[0];
+    form.reset();
+    $('#summernote').summernote('reset');
+    $('#preview').html('');
+    $('#modal-title').text('Thêm Template Email');
+    $('#modal-save-button').show();
+
+    $('#templateForm').find('[name="name"]').prop('disabled', false);
+    $('#templateForm').find('[name="subject"]').prop('disabled', false);
+    $('#summernote').summernote('enable');
+    $('#templateForm').find('[name="id"]').val('');
+  });
 });
 
 function fillUserData() {

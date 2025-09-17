@@ -27,7 +27,6 @@ public class ScheduleReq {
     @NotBlank(message = "Biểu thức CRON không được để trống")
     String cronExpression;
 
-    @Email(message = "Email nhận không hợp lệ")
     String receiverEmail;
 
     Status status;

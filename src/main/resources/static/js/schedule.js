@@ -1,5 +1,5 @@
 let currentPage = 0;
-const pageSize = 5;
+const pageSize = 10;
 let schedules = [];
 let templates = [];
 
@@ -139,6 +139,11 @@ function renderSchedules(schedules) {
                 </button>
                 </td>
                 <td><code>${schedule.cronExpression}</code></td>
+                <td style="${
+                  formatTypeAndActive(schedule.status, 'status') === 'active'
+                    ? 'color: green;'
+                    : 'color: red;'
+                }">${schedule.status}</td>
                 <td>
                         <button class="btn btn-primary" onclick="editSchedule(${
                           schedule.id
@@ -160,9 +165,13 @@ function renderSchedules(schedules) {
 
 function formatSendTime(expr) {
   const map = {
+    // Hàng ngày
     '0 0 8 * * ?': '8h sáng hàng ngày',
     '0 0 9 * * ?': '9h sáng hàng ngày',
+    '0 0 10 * * ?': '10h sáng hàng ngày',
+    '0 0 17 * * ?': '17h hàng ngày',
 
+    // Hàng tuần
     '0 0 8 ? * 2': '8h sáng mỗi thứ hai',
     '0 0 8 ? * 3': '8h sáng mỗi thứ ba',
     '0 0 8 ? * 4': '8h sáng mỗi thứ tư',
@@ -170,7 +179,6 @@ function formatSendTime(expr) {
     '0 0 8 ? * 6': '8h sáng mỗi thứ sáu',
     '0 0 8 ? * 7': '8h sáng mỗi thứ bảy',
     '0 0 8 ? * 1': '8h sáng mỗi chủ nhật',
-
     '0 0 9 ? * 2': '9h sáng mỗi thứ hai',
     '0 0 9 ? * 3': '9h sáng mỗi thứ ba',
     '0 0 9 ? * 4': '9h sáng mỗi thứ tư',
@@ -178,10 +186,18 @@ function formatSendTime(expr) {
     '0 0 9 ? * 6': '9h sáng mỗi thứ sáu',
     '0 0 9 ? * 7': '9h sáng mỗi thứ bảy',
     '0 0 9 ? * 1': '9h sáng mỗi chủ nhật',
+    '0 0 15 ? * 6': '15h mỗi thứ sáu',
 
+    // Hàng tháng
     '0 0 8 1 * ?': '8h sáng ngày mùng 1 hàng tháng',
     '0 0 9 15 * ?': '9h sáng ngày 15 hàng tháng',
     '0 0 10 L * ?': '10h sáng ngày cuối tháng',
+    '0 15 10 1 1,4,7,10 ?': '10h15 ngày mùng 1 của tháng 1,4,7,10 (hàng quý)',
+    '0 30 10 12 9 ?': '10h30 ngày 12/9',
+
+    // Cron đặc biệt
+    '0 0 9 20 9 ?': '9h sáng ngày 20/9',
+    '0 0 17 18 9 ?': '17h ngày 18/9',
   };
 
   return map[expr.trim()] || expr;
@@ -288,6 +304,15 @@ function saveSchedule() {
           : $('#generatedCron').text(),
     };
 
+    const emails = data.receiverEmail.split(',').map((e) => e.trim());
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    for (const email of emails) {
+      if (!emailRegex.test(email)) {
+        Swal.fire('Lỗi', `Email không hợp lệ: ${email}`, 'error');
+        return;
+      }
+    }
+
     if (!data.receiverEmail || !data.name) {
       Swal.fire('Lỗi', 'Vui lòng nhập đầy đủ thông tin.', 'error');
       return;
@@ -346,7 +371,11 @@ function editSchedule(id) {
     .find('[name="type"]')
     .val(formatTypeAndActive(schedule.type, 'type'))
     .change();
-  form.find('[name="sendTime"]').val(schedule.cronExpression).change();
+  if (formatTypeAndActive(schedule.type, 'type') === 'cron') {
+    form.find('[name="cronExp"]').val(schedule.cronExpression).change();
+  } else {
+    form.find('[name="sendTime"]').val(schedule.cronExpression).change();
+  }
   form.find('[name="emails"]').val(schedule.receiverEmail);
   form.find('[name="template"]').val(schedule.emailTemplate?.id).change();
   form
@@ -383,6 +412,15 @@ function updateSchedule() {
           ? formData.get('cronExp').trim()
           : $('#generatedCron').text(),
     };
+
+    const emails = data.receiverEmail.split(',').map((e) => e.trim());
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    for (const email of emails) {
+      if (!emailRegex.test(email)) {
+        Swal.fire('Lỗi', `Email không hợp lệ: ${email}`, 'error');
+        return;
+      }
+    }
 
     if (!data.receiverEmail) {
       Swal.fire('Lỗi', 'Vui lòng nhập email người nhận.', 'error');

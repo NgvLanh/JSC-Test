@@ -1,7 +1,6 @@
 package org.me.main.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.me.main.dto.req.TemplateReq;
 import org.me.main.dto.res.ApiRes;
 import org.me.main.mapper.TemplateMapper;
@@ -61,7 +60,7 @@ public class TemplateService implements ITemplateService {
     public ResponseEntity<?> getTemplates(Pageable pageable, String search) {
         Page<EmailTemplate> page;
         if (search != null && !search.isEmpty()) {
-            page = templateRepo.findByNameContainingOrderByIdDesc(pageable, search);
+            page = templateRepo.findByNameContainingIgnoreCaseOrderByIdDesc(pageable, search);
         } else {
             page = templateRepo.findAllByOrderByIdDesc(pageable);
         }

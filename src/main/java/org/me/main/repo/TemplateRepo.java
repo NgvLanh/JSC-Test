@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TemplateRepo extends JpaRepository<EmailTemplate, Long> {
     Page<EmailTemplate> findAllByOrderByIdDesc(Pageable pageable);
-    Page<EmailTemplate> findByNameContainingOrderByIdDesc(Pageable pageable, String name);
+    Page<EmailTemplate> findByNameContainingIgnoreCaseOrderByIdDesc(Pageable pageable, String name);
 
 }
