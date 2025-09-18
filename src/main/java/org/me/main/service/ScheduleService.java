@@ -60,6 +60,9 @@ public class ScheduleService implements IScheduleService {
                 case "0" -> {
                     Schedule schedule = scheduleRepo.findById(req.getId())
                             .orElseThrow(() -> new RuntimeException("Schedule không tồn tại"));
+
+                    Status oldStatus = schedule.getStatus();
+
                     schedule.setName(req.getName());
                     schedule.setCronExpression(req.getCronExpression());
                     schedule.setReceiverEmail(req.getReceiverEmail());
@@ -72,7 +75,15 @@ public class ScheduleService implements IScheduleService {
 
                     scheduleRepo.save(schedule);
 
-                    if (schedule.getStatus().equals(Status.ACTIVE)) {
+                    if (oldStatus == Status.INACTIVE && req.getStatus() == Status.ACTIVE) {
+                        quartzService.createEmailJob(
+                                schedule.getId(),
+                                schedule.getCronExpression(),
+                                schedule.getReceiverEmail(),
+                                schedule.getName(),
+                                schedule.getEmailTemplate().getBody()
+                        );
+                    } else if (oldStatus == Status.ACTIVE && req.getStatus() == Status.ACTIVE) {
                         quartzService.updateEmailJob(
                                 schedule.getId(),
                                 schedule.getCronExpression(),
@@ -80,8 +91,8 @@ public class ScheduleService implements IScheduleService {
                                 schedule.getName(),
                                 schedule.getEmailTemplate().getBody()
                         );
-                    } else {
-                        quartzService.deleteEmailJob(req.getId());
+                    } else if (oldStatus == Status.ACTIVE && req.getStatus() == Status.INACTIVE) {
+                        quartzService.deleteEmailJob(schedule.getId());
                     }
                 }
                 case "-1" -> {
