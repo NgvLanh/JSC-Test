@@ -83,7 +83,6 @@ public class ScheduleService implements IScheduleService {
                                 schedule.getName(),
                                 schedule.getEmailTemplate().getBody()
                         );
-                        log.info("1.Running INACTIVE to ACTIVE");
                     } else if (oldStatus == Status.ACTIVE && req.getStatus() == Status.ACTIVE) {
                         quartzService.updateEmailJob(
                                 schedule.getId(),
@@ -92,16 +91,14 @@ public class ScheduleService implements IScheduleService {
                                 schedule.getName(),
                                 schedule.getEmailTemplate().getBody()
                         );
-                        log.info("1.Running ACTIVE to ACTIVE = NO JOB CHANGE");
                     } else if (oldStatus == Status.ACTIVE && req.getStatus() == Status.INACTIVE) {
                         quartzService.deleteEmailJob(schedule.getId());
-                        log.info("1.Running ACTIVE to INACTIVE = DEL JOB");
                     }
                 }
                 case "-1" -> {
                     Schedule schedule = scheduleRepo.findById(req.getId())
                             .orElseThrow(() -> new RuntimeException("Schedule không tồn tại"));
-                    if (schedule.getStatus().equals(Status.ACTIVE)) {
+                    if (schedule.getStatus().equals(Status.ACTIVE) && req.getStatus().equals(Status.ACTIVE)) {
                         quartzService.deleteEmailJob(req.getId());
                     }
                     scheduleRepo.deleteById(req.getId());
