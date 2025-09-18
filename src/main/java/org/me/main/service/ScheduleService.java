@@ -88,8 +88,13 @@ public class ScheduleService implements IScheduleService {
                     if (!scheduleRepo.existsById(req.getId())) {
                         throw new RuntimeException("Schedule không tồn tại");
                     }
+                    Schedule schedule = scheduleRepo.findById(req.getId())
+                            .orElseThrow(() -> new RuntimeException("Schedule không tồn tại"));
+                    if (schedule.getStatus().equals(Status.ACTIVE)) {
+                        quartzService.deleteEmailJob(req.getId());
+                    }
                     scheduleRepo.deleteById(req.getId());
-                    quartzService.deleteEmailJob(req.getId());
+
                 }
                 default -> throw new RuntimeException("Method không hợp lệ");
             }
