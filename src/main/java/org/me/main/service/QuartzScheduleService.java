@@ -1,11 +1,15 @@
 package org.me.main.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.TimeZone;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class QuartzScheduleService {
@@ -28,6 +32,7 @@ public class QuartzScheduleService {
                 .build();
 
         scheduler.scheduleJob(jobDetail, trigger);
+        logJob("Created", jobDetail, trigger);
     }
 
     public void updateEmailJob(Long scheduleId, String cron, String to, String subject, String body) throws SchedulerException {
@@ -55,6 +60,7 @@ public class QuartzScheduleService {
 
         scheduler.addJob(jobDetail, true, true);
         scheduler.rescheduleJob(triggerKey, newTrigger);
+        logJob("Updated", jobDetail, newTrigger);
     }
 
     public void deleteEmailJob(Long scheduleId) throws SchedulerException {
@@ -63,5 +69,24 @@ public class QuartzScheduleService {
             throw new SchedulerException("Job không tồn tại để xóa");
         }
         scheduler.deleteJob(jobKey);
+        log.info("Deleted job: {}", jobKey);
+    }
+
+    private void logJob(String action, JobDetail jobDetail, Trigger trigger) throws SchedulerException {
+        Trigger.TriggerState state = scheduler.getTriggerState(trigger.getKey());
+        log.info("{} job: {} | Trigger: {} | State: {}",
+                action, jobDetail.getKey(), trigger.getKey(), state);
+    }
+
+    public void printAllJobs() throws SchedulerException {
+        for (String groupName : scheduler.getJobGroupNames()) {
+            for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+                log.info("Job: {}", jobKey);
+                List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+                for (Trigger trigger : triggers) {
+                    log.info("  Trigger: {} - state: {}", trigger.getKey(), scheduler.getTriggerState(trigger.getKey()));
+                }
+            }
+        }
     }
 }
