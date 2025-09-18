@@ -18,7 +18,7 @@ public class QuartzInit implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         for (Schedule s : scheduleRepo.findByStatus(Status.ACTIVE)) {
-            quartzService.scheduleEmailJob(
+            quartzService.createEmailJob(
                     s.getId(),
                     s.getCronExpression(),
                     s.getReceiverEmail(),

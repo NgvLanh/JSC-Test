@@ -11,7 +11,7 @@ import java.util.TimeZone;
 public class QuartzScheduleService {
     private final Scheduler scheduler;
 
-    public void scheduleEmailJob(Long scheduleId, String cron, String to, String subject, String body) throws SchedulerException {
+    public void createEmailJob(Long scheduleId, String cron, String to, String subject, String body) throws SchedulerException {
         JobDetail jobDetail = JobBuilder.newJob(EmailJobService.class)
                 .withIdentity("emailJob-" + scheduleId, "email-jobs")
                 .usingJobData("receiverEmail", to)
@@ -30,7 +30,38 @@ public class QuartzScheduleService {
         scheduler.scheduleJob(jobDetail, trigger);
     }
 
+    public void updateEmailJob(Long scheduleId, String cron, String to, String subject, String body) throws SchedulerException {
+        JobKey jobKey = JobKey.jobKey("emailJob-" + scheduleId, "email-jobs");
+        TriggerKey triggerKey = TriggerKey.triggerKey("emailTrigger-" + scheduleId, "email-triggers");
+
+        if (!scheduler.checkExists(jobKey)) {
+            createEmailJob(scheduleId, cron, to, subject, body);
+            return;
+        }
+
+        JobDetail jobDetail = scheduler.getJobDetail(jobKey)
+                .getJobBuilder()
+                .usingJobData("receiverEmail", to)
+                .usingJobData("subject", subject)
+                .usingJobData("body", body)
+                .build();
+
+        CronTrigger newTrigger = TriggerBuilder.newTrigger()
+                .withIdentity(triggerKey)
+                .withSchedule(CronScheduleBuilder.cronSchedule(cron)
+                        .inTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")))
+                .forJob(jobDetail)
+                .build();
+
+        scheduler.addJob(jobDetail, true, true);
+        scheduler.rescheduleJob(triggerKey, newTrigger);
+    }
+
     public void deleteEmailJob(Long scheduleId) throws SchedulerException {
-        scheduler.deleteJob(new JobKey("emailJob-" + scheduleId, "email-jobs"));
+        JobKey jobKey = JobKey.jobKey("emailJob-" + scheduleId, "email-jobs");
+        if (!scheduler.checkExists(jobKey)) {
+            throw new SchedulerException("Job không tồn tại để xóa");
+        }
+        scheduler.deleteJob(jobKey);
     }
 }

@@ -3,17 +3,14 @@ package org.me.main.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.me.main.dto.req.ScheduleReq;
-import org.me.main.dto.req.TemplateReq;
 import org.me.main.dto.res.ApiRes;
 import org.me.main.mapper.ScheduleMapper;
-import org.me.main.mapper.TemplateMapper;
 import org.me.main.model.EmailTemplate;
 import org.me.main.model.Schedule;
 import org.me.main.model._enum.Status;
 import org.me.main.repo.ScheduleRepo;
 import org.me.main.repo.TemplateRepo;
 import org.me.main.service._interface.IScheduleService;
-import org.me.main.service._interface.ITemplateService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -50,13 +47,15 @@ public class ScheduleService implements IScheduleService {
 
                     scheduleRepo.save(schedule);
 
-                    quartzService.scheduleEmailJob(
-                            schedule.getId(),
-                            schedule.getCronExpression(),
-                            schedule.getReceiverEmail(),
-                            schedule.getName(),
-                            schedule.getEmailTemplate().getBody()
-                    );
+                    if (schedule.getStatus().equals(Status.ACTIVE)) {
+                        quartzService.createEmailJob(
+                                schedule.getId(),
+                                schedule.getCronExpression(),
+                                schedule.getReceiverEmail(),
+                                schedule.getName(),
+                                schedule.getEmailTemplate().getBody()
+                        );
+                    }
                 }
                 case "0" -> {
                     Schedule schedule = scheduleRepo.findById(req.getId())
@@ -72,12 +71,25 @@ public class ScheduleService implements IScheduleService {
                     schedule.setEmailTemplate(template);
 
                     scheduleRepo.save(schedule);
+
+                    if (schedule.getStatus().equals(Status.ACTIVE)) {
+                        quartzService.updateEmailJob(
+                                schedule.getId(),
+                                schedule.getCronExpression(),
+                                schedule.getReceiverEmail(),
+                                schedule.getName(),
+                                schedule.getEmailTemplate().getBody()
+                        );
+                    } else {
+                        quartzService.deleteEmailJob(req.getId());
+                    }
                 }
                 case "-1" -> {
                     if (!scheduleRepo.existsById(req.getId())) {
                         throw new RuntimeException("Schedule không tồn tại");
                     }
                     scheduleRepo.deleteById(req.getId());
+                    quartzService.deleteEmailJob(req.getId());
                 }
                 default -> throw new RuntimeException("Method không hợp lệ");
             }

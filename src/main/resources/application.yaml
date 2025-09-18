@@ -39,4 +39,7 @@ spring:
           auth: true
           starttls:
             enable: true
-
+server:
+  servlet:
+    session:
+      timeout: 30m

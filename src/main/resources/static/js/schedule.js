@@ -10,7 +10,7 @@ $(document).ready(function () {
 
   $('#type').change(updateTimeOptions);
   $('#type, #sendTime').change(generateCronExpression);
-  $('#cronExp').on('input', function () {
+  $('#cronExp').on('input change', function () {
     $('#generatedCron').text($(this).val());
   });
 });
