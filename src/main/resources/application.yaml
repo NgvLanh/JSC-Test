@@ -28,17 +28,29 @@ spring:
               - profile
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${EMAIL_NAME}
-    password: ${EMAIL_PASS}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+# loại bỏ do deploy (render) ko dùng được
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: ${EMAIL_NAME}
+#    password: ${EMAIL_PASS}
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+#          connection timeout: 10000
+#          timeout: 10000
+#          write timeout: 10000
 
   quartz:
     auto-startup: true
+
+# SendGrid
+sendgrid:
+  api:
+    key: ${SEND_GRID_API_KEY}
+  from:
+    email: ${SEND_GRID_FROM_EMAIL}
+    name: ${SEND_GRID_FROM_NAME}
