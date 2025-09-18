@@ -134,6 +134,7 @@ function renderTemplates(templates) {
                 <td>${index + 1}</td>
                 <td>${template.name}</td>
                 <td>${template.subject}</td>
+                <td>${template.numUses}</td>
                 <td>${new Date(template.createAt).toLocaleString()}</td>
                 <td>
                     <button class="btn btn-info" onclick="viewTemplate(${

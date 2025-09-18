@@ -13,5 +13,6 @@ public class TemplateRes {
     String name;
     String subject;
     String body;
+    Integer numUses;
     Instant createAt;
 }
