@@ -39,3 +39,6 @@ spring:
           auth: true
           starttls:
             enable: true
+
+  quartz:
+    auto-startup: true

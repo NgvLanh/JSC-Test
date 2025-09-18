@@ -2,17 +2,18 @@ package org.me.main.service;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class EmailJobService implements Job {
@@ -40,8 +41,9 @@ public class EmailJobService implements Job {
 
             mailSender.send(mimeMessage);
 
-            System.out.println("Gửi mail tới: " + String.join(", ", to));
+            log.info("*** Gửi mail tới: {}", String.join(", ", to));
         } catch (Exception e) {
+            log.error("Error sending email", e);
             throw new JobExecutionException("Error sending email", e);
         }
     }
