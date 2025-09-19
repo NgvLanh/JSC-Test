@@ -108,35 +108,4 @@ public class EmailJobService implements Job {
         // Hoặc có thể thay đổi logic tùy yêu cầu
         return successCount > 0;
     }
-
-//    Code cũ chạy đc local nhưng deploy (render) ko đc
-//    private final JavaMailSender mailSender;
-
-//    @Override
-//    public void execute(JobExecutionContext context) throws JobExecutionException {
-//        JobDataMap dataMap = context.getMergedJobDataMap();
-//        String raw = dataMap.getString("receiverEmail");
-//        String[] to = Arrays.stream(raw.split(","))
-//                .map(String::trim)
-//                .filter(s -> !s.isEmpty())
-//                .toArray(String[]::new);
-//        String subject = dataMap.getString("subject");
-//        String body = dataMap.getString("body");
-//
-//        try {
-//            MimeMessage mimeMessage = mailSender.createMimeMessage();
-//            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-//
-//            helper.setTo(to);
-//            helper.setSubject(subject);
-//            helper.setText(body, true);
-//
-//            mailSender.send(mimeMessage);
-//
-//            log.info("*** Gửi mail tới: {}", String.join(", ", to));
-//        } catch (Exception e) {
-//            log.error("Error sending email", e);
-//            throw new JobExecutionException("Error sending email", e);
-//        }
-//    }
 }
